@@ -1,5 +1,5 @@
 <?php
-require_once "iRadovi.php"; // Ensure the interface is included
+require_once "iRadovi.php";
 
 class DiplomskiRad implements iRadovi
 {
@@ -33,6 +33,13 @@ class DiplomskiRad implements iRadovi
 
         $items = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
+        if (!$items) {
+            echo "
+            <div class='alert alert-danger' role='alert'>
+                Citanje iz baze nije uspjelo!
+            </div>";
+        }
+
         foreach ($items as $item) {
             $rad = DiplomskiRad::create(
                 array(
@@ -50,7 +57,7 @@ class DiplomskiRad implements iRadovi
 
     function save($pdo)
     {
-        // Check if the item already exists (e.g., by the 'id_rada' or 'link_rada')
+        // Provjera postoji li taj rad
         $checkQuery = "SELECT COUNT(*) FROM diplomski_radovi WHERE id_rada = :id_rada OR link_rada = :link_rada";
         $stmtCheck = $pdo->prepare($checkQuery);
         $stmtCheck->execute([
@@ -58,7 +65,6 @@ class DiplomskiRad implements iRadovi
             'link_rada' => $this->link_rada,
         ]);
 
-        // Get the count of rows
         $existingCount = $stmtCheck->fetchColumn();
 
         if ($existingCount > 0) {
