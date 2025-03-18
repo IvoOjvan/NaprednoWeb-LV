@@ -1,7 +1,9 @@
+<?php session_start(); ?>
 <?php
 
-session_start();
+
 $encryption_key = md5("m0J n3Ki kLjuc");
+
 
 // Odaber cipher metodu AES
 $cipher = 'AES-128-CTR';
@@ -12,7 +14,8 @@ $options = 0;
 
 // Generiraj siguran inicijalizacijski vektor (IV) - 16 byte
 $encryption_iv = openssl_random_pseudo_bytes($iv_length);
-
+$_SESSION['key'] = $encryption_key;
+$_SESSION['encryption_iv'] = $encryption_iv;
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if (isset($_FILES['fileToUpload'])) {
@@ -48,7 +51,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $filename = pathinfo($file['name'], PATHINFO_FILENAME);
 
             $encrypted_file_path = $upload_dir . '/' . $filename . ".enc";
-            $key_file_path = $upload_dir . '/' . $filename . ".key";
+
+
+            //$key_file_path = $upload_dir . '/' . $filename . ".key";
 
             // Spremi kriptiranu datoteku i ključ
             if (!file_put_contents($encrypted_file_path, $encrypted_file)) {
@@ -56,11 +61,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     "<div class='alert alert-danger' role='alert'>
                     Failed to save encrypted file.
                 </div>";
-            } else if (!file_put_contents($key_file_path, base64_encode($encryption_iv))) {
-                echo "<div class='alert alert-danger' role='alert'>
-                        Failed to save key.
-                    </div>";
-            } else {
+            }/* else if (!file_put_contents($key_file_path, base64_encode($encryption_iv))) {
+          echo "<div class='alert alert-danger' role='alert'>
+                  Failed to save key.
+              </div>";
+      }*/ else {
                 echo
                     "<div class='alert alert-success' role='alert'>
                     File encrypted successfully

@@ -1,6 +1,8 @@
 <?php
+
 $upload_dir = 'uploads/';
-$decryption_key = md5("m0J n3Ki kLjuc");
+$decryption_key = $_SESSION['key'];
+$decryption_iv = $_SESSION['encryption_iv'];
 $cipher = 'AES-128-CTR';
 $options = 0;
 
@@ -15,29 +17,26 @@ foreach ($files as $file) {
     $filename = basename($file, ".enc");
     $keyFile = $upload_dir . $filename . ".key";
 
-    if (file_exists($keyFile)) {
-        $decryption_iv = base64_decode(file_get_contents($keyFile));
-        $encrypted_data = file_get_contents($file);
+    $encrypted_data = file_get_contents($file);
 
-        $decrypted_data = openssl_decrypt(
-            $encrypted_data,
-            $cipher,
-            $decryption_key,
-            $options,
-            $decryption_iv
-        );
+    $decrypted_data = openssl_decrypt(
+        $encrypted_data,
+        $cipher,
+        $decryption_key,
+        $options,
+        $decryption_iv
+    );
 
-        if ($decrypted_data === false) {
-            echo "<p>Error decrypting file: $filename</p>";
-            continue;
-        }
-
-        // Spremi dekriptirani file
-        $decrypted_file_path = $upload_dir . "decrypted_" . $filename;
-        file_put_contents($decrypted_file_path, $decrypted_data);
-
-        echo "<a href='$decrypted_file_path' download>Download $filename</a><br>";
+    if ($decrypted_data === false) {
+        echo "<p>Error decrypting file: $filename</p>";
+        continue;
     }
+
+    // Spremi dekriptirani file
+    $decrypted_file_path = $upload_dir . "decrypted_" . $filename;
+    file_put_contents($decrypted_file_path, $decrypted_data);
+
+    echo "<a href='$decrypted_file_path' download>Download $filename</a><br>";
 }
 
 ?>
