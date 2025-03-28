@@ -14,51 +14,27 @@
                     <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
                         Create task
                     </button>
+                    <div class="row mt-2 mb-2">
+                        @if (count($tasks) > 0)
+                            @foreach ($tasks as $task)
+                                <div class="card ms-3 mb-3" style="width: 18rem;">
+                                    <div class="card-body">
+                                        <h5 class="card-title">{{ $task->title }}</h5>
+                                        <h6 class="card-subtitle mb-2 text-muted">
+                                            {{date('d.m.Y', strtotime($task->start_date)) }} -
+                                            {{date('d.m.Y', strtotime($task->due_date)) }}
+                                        </h6>
+                                        <p class="card-text">{{ $task->description }}</p>
+                                        <div class="row">
+                                            <a href="{{ route('tasks.details', $task->id) }}"
+                                                class="card-link text-end">Open</a>
+                                        </div>
 
-                    <table class="table mt-4">
-                        <thead>
-                            <tr>
-                                <th scope="col" class="text-center">#</th>
-                                <th scope="col" class="text-center">Title</th>
-                                <th scope="col" class="text-center">Description</th>
-                                <th scope="col" class="text-center">Price</th>
-                                <th scope="col" class="text-center">Start Date</th>
-                                <th scope="col" class="text-center">Due Date</th>
-                                <th scope="col" class="text-center"></th>
-                                <th scope="col" class="text-center"></th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @if (count($tasks) > 0)
-                                @foreach ($tasks as $task)
-                                    <tr>
-                                        <th scope="row">{{ $task->id }}</th>
-                                        <td class="text-center">{{ $task->title }}</td>
-                                        <td class="text-center">{{ $task->description }}</td>
-                                        <td class="text-center">{{ $task->price }} $</td>
-                                        <td class="text-center">{{ $task->start_date }}</td>
-                                        <td class="text-center">{{ $task->due_date }}</td>
-                                        <td class="text-center">
-                                            @if (Auth::id() === $task->user_id)
-                                                <form action="{{ route("tasks.destroy", $task->id) }}" method="POST">
-                                                    @csrf
-                                                    @method('DELETE')
-                                                    <button type="submit" class="btn btn-danger">Delete</button>
-                                                </form>
-                                            @endif
-                                        </td>
-                                        <td class="text-center">
-                                            <a class="btn btn-primary"
-                                                href="{{ route('tasks.details', $task->id) }}">Details</a>
-                                        </td>
-                                    </tr>
-                                @endforeach
-                            @endif
-                        </tbody>
-                    </table>
-
-
-
+                                    </div>
+                                </div>
+                            @endforeach
+                        @endif
+                    </div>
                 </div>
 
                 <!-- Modal -->

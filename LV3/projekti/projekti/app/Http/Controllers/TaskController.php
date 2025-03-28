@@ -56,7 +56,7 @@ class TaskController extends Controller
 
         $this->authorize('destroy', $task);
         $task->delete();
-        return redirect()->back()->with('success', '');
+        return redirect()->route('tasks.index')->with('success', '');
     }
 
     public function details(Request $request, string $task_id)

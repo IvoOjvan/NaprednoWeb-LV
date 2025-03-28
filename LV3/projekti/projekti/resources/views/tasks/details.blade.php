@@ -144,7 +144,33 @@
                         @endif
                     </ul>
                 </div>
-            </div>
+            </div>@if (Auth::id() === $task->user_id)
+                <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg mt-2">
+                    <div class="px-6 py-2">
+
+
+                        <form action="{{ route("tasks.destroy", $task->id) }}" method="POST">
+                            @csrf
+                            @method('DELETE')
+                            <div class="row">
+                                <div class="col">
+                                    <div class="text-danger pt-4">
+                                        Do you want to delete task: {{ $task->title }}?
+                                    </div>
+                                </div>
+                                <div class="col">
+                                    <div class="text-end py-3">
+                                        <button type="submit" class="btn btn-danger">Delete Task</button>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </form>
+
+                    </div>
+
+                </div>
+            @endif
         </div>
     </div>
 </x-app-layout>
